@@ -29,9 +29,6 @@
     "./lib/env/node/workers": "./lib/env/react-native/workers",
     "./lib/env/node/networkUtils": "./lib/env/react-native/networkUtils"
   },
-  "bin": {
-    "bump": "./node_modules/version-bump-prompt/bin/bump"
-  },
   "scripts": {
     "dev": "webpack-dev-server --config ./webpack/config.dev.babel.js --mode development",
     "build": "rm -rf build && webpack --config ./webpack/config.prod.babel.js --progress",
