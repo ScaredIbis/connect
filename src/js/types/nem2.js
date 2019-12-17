@@ -173,19 +173,21 @@ export type MultisigModification = {
     publicKeyDeletions: string[]
 }
 
-export type AccountAddressRestrictionTransaction = {
+// Define the AccountRestriction types seperately as they all need to share the same properties
+// restrictionAdditions, restrictionDeletions which differ in types between the three transactions.
+export type AccountAddressRestrictionTransaction = TransactionBase & {
     restrictionType: number,
     restrictionAdditions: NEM2Address[],
     restrictionDeletions: NEM2Address[]
 }
 
-export type AccountMosaicRestrictionTransaction = {
+export type AccountMosaicRestrictionTransaction = TransactionBase & {
     restrictionType: number,
     restrictionAdditions: string[],
     restrictionDeletions: string[]
 }
 
-export type AccountOperationRestrictionTransaction = {
+export type AccountOperationRestrictionTransaction = TransactionBase & {
     restrictionType: number,
     restrictionAdditions: number[],
     restrictionDeletions: number[]

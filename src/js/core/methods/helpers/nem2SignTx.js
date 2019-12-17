@@ -30,7 +30,10 @@ import type {
 
 import type {
     Transaction as $NEM2Transaction,
-    Mosaic as $NEM2Mosaic
+    Mosaic as $NEM2Mosaic,
+    AccountAddressRestrictionTransaction,
+    AccountMosaicRestrictionTransaction,
+    AccountOperationRestrictionTransaction
 } from '../../../types/nem2';
 
 export const NEM2_MAINNET: number = 0x68;
@@ -462,7 +465,7 @@ const multisigModificationMessage = (tx: $NEM2Transaction): NEM2MultisigModifica
     };
 };
 
-const accountAddressRestrictionMessage = (tx: $NEM2Transaction): NEM2AccountAddressRestrictionTransaction => {
+const accountAddressRestrictionMessage = (tx: AccountAddressRestrictionTransaction): NEM2AccountAddressRestrictionTransaction => {
     return {
         restriction_type: tx.restrictionType,
         restriction_additions: tx.restrictionAdditions.map((addition) => {
@@ -480,7 +483,7 @@ const accountAddressRestrictionMessage = (tx: $NEM2Transaction): NEM2AccountAddr
     };
 };
 
-const accountMosaicRestrictionMessage = (tx: $NEM2Transaction): NEM2AccountMosaicRestrictionTransaction => {
+const accountMosaicRestrictionMessage = (tx: AccountMosaicRestrictionTransaction): NEM2AccountMosaicRestrictionTransaction => {
     return {
         restriction_type: tx.restrictionType,
         restriction_additions: tx.restrictionAdditions,
@@ -488,7 +491,7 @@ const accountMosaicRestrictionMessage = (tx: $NEM2Transaction): NEM2AccountMosai
     };
 };
 
-const accountOperationRestrictionMessage = (tx: $NEM2Transaction): NEM2AccountOperationRestrictionTransaction => {
+const accountOperationRestrictionMessage = (tx: AccountOperationRestrictionTransaction): NEM2AccountOperationRestrictionTransaction => {
     return {
         restriction_type: tx.restrictionType,
         restriction_additions: tx.restrictionAdditions,
