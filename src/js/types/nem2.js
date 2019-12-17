@@ -37,6 +37,10 @@ export type TransactionType =
   | 0x4148 // HashLock
   | 0x4141 // AggregateComplete
   | 0x4241 // AggregateBonded
+  | 0x4155 // MultisigModification
+  | 0x4150 // AccountAddressRestrictionTransaction
+  | 0x4250 // AccountMosaicRestrictionTransaction
+  | 0x4350 // AccountOperationRestrictionTransaction
 
 export type NEM2Address = {
     address: String,
@@ -68,7 +72,11 @@ export type Transaction =   TransactionBase &
                             SecretLock &
                             SecretProof &
                             HashLock &
-                            Aggregate;
+                            Aggregate &
+                            MultisigModification &
+                            AccountAddressRestrictionTransaction &
+                            AccountMosaicRestrictionTransaction &
+                            AccountOperationRestrictionTransaction;
 
 export type Transfer = {
     recipientAddress: NEM2Address,
@@ -158,8 +166,33 @@ export type HashLock = {
     hash: string
 }
 
+export type MultisigModification = {
+    minApprovalDelta: number,
+    minRemovalDelta: number,
+    publicKeyAdditions: string[],
+    publicKeyDeletions: string[]
+}
+
+export type AccountAddressRestrictionTransaction = {
+    restrictionType: number,
+    restrictionAdditions: NEM2Address[],
+    restrictionDeletions: NEM2Address[]
+}
+
+export type AccountMosaicRestrictionTransaction = {
+    restrictionType: number,
+    restrictionAdditions: string[],
+    restrictionDeletions: string[]
+}
+
+export type AccountOperationRestrictionTransaction = {
+    restrictionType: number,
+    restrictionAdditions: number[],
+    restrictionDeletions: number[]
+}
+
 export type Aggregate = {
-    innerTransactions: Array<Transaction>,
+    transactions: Array<Transaction>,
     cosignatures: Array<Cosignatures>
 }
 

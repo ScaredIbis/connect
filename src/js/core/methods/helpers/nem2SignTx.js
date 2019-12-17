@@ -21,7 +21,11 @@ import type {
     NEM2SecretProof,
     NEM2HashLock,
     NEM2Aggregate,
-    NEM2InnerTransaction
+    NEM2InnerTransaction,
+    NEM2MultisigModification,
+    NEM2AccountAddressRestrictionTransaction,
+    NEM2AccountMosaicRestrictionTransaction,
+    NEM2AccountOperationRestrictionTransaction
 } from '../../../types/trezor';
 
 import type {
@@ -53,6 +57,10 @@ export const NEM2_SECRET_PROOF: number = 0x4252;
 export const NEM2_HASH_LOCK: number = 0x4148;
 export const NEM2_AGGREGATE_COMPLETE: number = 0x4141;
 export const NEM2_AGGREGATE_BONDED: number = 0x4241;
+export const NEM2_MULTISIG_MODIFICATION: number = 0x4155;
+export const NEM2_ACCOUNT_ADDRESS_RESTRICTION: number = 0x4150;
+export const NEM2_ACCOUNT_MOSAIC_RESTRICTION: number = 0x4250;
+export const NEM2_ACCOUNT_OPERATION_RESTRICTION: number = 0x4350;
 
 export const TX_TYPES = {
     'transfer': NEM2_TRANSFER,
@@ -68,7 +76,15 @@ export const TX_TYPES = {
     'hashLock': NEM2_HASH_LOCK,
     'aggregate': NEM2_AGGREGATE_COMPLETE,
     'aggregate': NEM2_AGGREGATE_BONDED,
+    'multisigModification': NEM2_MULTISIG_MODIFICATION,
+    'accountAddressRestriction': NEM2_ACCOUNT_ADDRESS_RESTRICTION,
+    'accountMosaicRestriction': NEM2_ACCOUNT_MOSAIC_RESTRICTION,
+    'accountOperationRestriction': NEM2_ACCOUNT_OPERATION_RESTRICTION,
 };
+
+function buf2hex(buffer) {
+    return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
+}
 
 const getCommon = (tx: $NEM2Transaction): NEM2TransactionCommon => {
     validateParams(tx, [
@@ -142,14 +158,18 @@ const transferMessage = (tx: $NEM2Transaction): NEM2Transfer => {
 
 const mosaicDefinitionMessage = (tx: $NEM2Transaction): NEM2MosaicDefinition => {
     validateParams(tx, [
-        { name: 'nonce', type: 'number', obligatory: true },
+        { name: 'nonce', type: 'object', obligatory: true },
         { name: 'id', type: 'string', obligatory: true },
         { name: 'flags', type: 'number', obligatory: true },
         { name: 'divisibility', type: 'number', obligatory: true },
         { name: 'duration', type: 'string', obligatory: true },
     ]);
+    validateParams(tx.nonce, [
+        { name: 'nonce', type: 'object', obligatory: true },
+    ]);
+
     return {
-        nonce: tx.nonce,
+        nonce: parseInt("0x" + buf2hex(tx.nonce.nonce)),
         mosaic_id: tx.id,
         flags: tx.flags,
         divisibility: tx.divisibility,
@@ -401,10 +421,10 @@ const hashLockMessage = (tx: $NEM2Transaction): NEM2HashLock => {
 
 const hashAggregate = (tx: $NEM2Transaction): NEM2Aggregate => {
     validateParams(tx, [
-        { name: 'innerTransactions', type: 'array', obligatory: true },
-        { name: 'cosignatures', type: 'array', obligatory: false },
+        { name: 'transactions', type: 'array', obligatory: true },
+        { name: 'cosignatures', type: 'array', obligatory: false, allowEmpty: true },
     ]);
-    const inner_transactions = tx.innerTransactions.map((transaction) => {
+    const inner_transactions = tx.transactions.map(({ transaction }) => {
         const inner_transaction: NEM2InnerTransaction = {
             common: getEmbeddedCommon(transaction),
             ...getTransactionBody(transaction)
@@ -424,6 +444,49 @@ const hashAggregate = (tx: $NEM2Transaction): NEM2Aggregate => {
     return {
         inner_transactions,
         cosignatures
+    };
+};
+
+const multisigModificationMessage = (tx: $NEM2Transaction): NEM2MultisigModification => {
+    return {
+        min_approval_delta: tx.minApprovalDelta || 0,
+        min_removal_delta: tx.minRemovalDelta || 0,
+        public_key_additions: tx.publicKeyAdditions || [],
+        public_key_deletions: tx.publicKeyDeletions || [],
+    };
+};
+
+const accountAddressRestrictionMessage = (tx: $NEM2Transaction): NEM2AccountAddressRestrictionTransaction => {
+    return {
+        restriction_type: tx.restrictionType,
+        restriction_additions: tx.restrictionAdditions.map((addition) => {
+            return {
+                address: addition.address,
+                network_type: addition.networkType
+            }
+        }),
+        restriction_deletions: tx.restrictionDeletions.map((addition) => {
+            return {
+                address: addition.address,
+                network_type: addition.networkType
+            }
+        }),
+    };
+};
+
+const accountMosaicRestrictionMessage = (tx: $NEM2Transaction): NEM2AccountMosaicRestrictionTransaction => {
+    return {
+        restriction_type: tx.restrictionType,
+        restriction_additions: tx.restrictionAdditions,
+        restriction_deletions: tx.restrictionDeletions
+    };
+};
+
+const accountOperationRestrictionMessage = (tx: $NEM2Transaction): NEM2AccountOperationRestrictionTransaction => {
+    return {
+        restriction_type: tx.restrictionType,
+        restriction_additions: tx.restrictionAdditions,
+        restriction_deletions: tx.restrictionDeletions
     };
 };
 
@@ -472,13 +535,23 @@ const getTransactionBody = (transaction) => {
         case NEM2_AGGREGATE_BONDED:
             message.aggregate = hashAggregate(transaction);
             break;
-
+        case NEM2_MULTISIG_MODIFICATION:
+            message.multisig_modification = multisigModificationMessage(transaction);
+            break;
+        case NEM2_ACCOUNT_ADDRESS_RESTRICTION:
+            message.account_address_restriction = accountAddressRestrictionMessage(transaction);
+            break;
+        case NEM2_ACCOUNT_MOSAIC_RESTRICTION:
+            message.account_mosaic_restriction = accountMosaicRestrictionMessage(transaction);
+            break;
+        case NEM2_ACCOUNT_OPERATION_RESTRICTION:
+            message.account_operation_restriction = accountOperationRestrictionMessage(transaction);
+            break;
         default:
             throw new Error(`Unknown transaction type: ${transaction.type}`);
     }
 
     return message;
-
 }
 
 export const createTx = (tx: $NEM2Transaction, address_n: Array<number>, generation_hash: string): NEM2SignTxMessage => {

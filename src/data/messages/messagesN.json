@@ -7506,6 +7506,34 @@
                     "type": "NEM2SecretProofTransaction",
                     "name": "secret_proof",
                     "id": 18
+                },
+                {
+                    "rule": "optional",
+                    "options": {},
+                    "type": "NEM2MultisigModificationTransaction",
+                    "name": "multisig_modification",
+                    "id": 19
+                },
+                {
+                    "rule": "optional",
+                    "options": {},
+                    "type": "NEM2AccountAddressRestrictionTransaction",
+                    "name": "account_address_restriction",
+                    "id": 21
+                },
+                {
+                    "rule": "optional",
+                    "options": {},
+                    "type": "NEM2AccountMosaicRestrictionTransaction",
+                    "name": "account_mosaic_restriction",
+                    "id": 22
+                },
+                {
+                    "rule": "optional",
+                    "options": {},
+                    "type": "NEM2AccountOperationRestrictionTransaction",
+                    "name": "account_operation_restriction",
+                    "id": 23
                 }
             ],
             "enums": [
@@ -7571,6 +7599,22 @@
                         {
                             "name": "SECRET_PROOF",
                             "id": 16978
+                        },
+                        {
+                            "name": "MULTISIG_MODIFICATION",
+                            "id": 16725
+                        },
+                        {
+                            "name": "ACCOUNT_ADDRESS_RESTRICTION",
+                            "id": 16720
+                        },
+                        {
+                            "name": "ACCOUNT_MOSAIC_RESTRICTION",
+                            "id": 16976
+                        },
+                        {
+                            "name": "ACCOUNT_OPERATION_RESTRICTION",
+                            "id": 17232
                         }
                     ],
                     "options": {}
@@ -7657,6 +7701,52 @@
                         {
                             "name": "HASH_256",
                             "id": 3
+                        }
+                    ],
+                    "options": {}
+                },
+                {
+                    "name": "NEM2AccountRestrictionFlags",
+                    "values": [
+                        {
+                            "name": "ALLOW_INCOMING_ADDRESS",
+                            "id": 1
+                        },
+                        {
+                            "name": "ALLOW_MOSAIC",
+                            "id": 2
+                        },
+                        {
+                            "name": "ALLOW_INCOMING_TRANSACTION_TYPE",
+                            "id": 4
+                        },
+                        {
+                            "name": "ALLOW_OUTGOING_ADDRESS",
+                            "id": 16385
+                        },
+                        {
+                            "name": "ALLOW_OUTGOING_TRANSACTION_TYPE",
+                            "id": 16388
+                        },
+                        {
+                            "name": "BLOCK_INCOMING_ADDRESS",
+                            "id": 32769
+                        },
+                        {
+                            "name": "BLOCK_MOSAIC",
+                            "id": 32770
+                        },
+                        {
+                            "name": "BLOCK_INCOMING_TRANSACTION_TYPE",
+                            "id": 32772
+                        },
+                        {
+                            "name": "BLOCK_OUTGOING_ADDRESS",
+                            "id": 49153
+                        },
+                        {
+                            "name": "BLOCK_OUTGOING_TRANSACTION_TYPE",
+                            "id": 49156
                         }
                     ],
                     "options": {}
@@ -8419,6 +8509,133 @@
                             "type": "string",
                             "name": "value",
                             "id": 5
+                        }
+                    ],
+                    "enums": [],
+                    "messages": [],
+                    "options": {},
+                    "oneofs": {}
+                },
+                {
+                    "name": "NEM2MultisigModificationTransaction",
+                    "fields": [
+                        {
+                            "rule": "optional",
+                            "options": {},
+                            "type": "uint32",
+                            "name": "min_approval_delta",
+                            "id": 1
+                        },
+                        {
+                            "rule": "optional",
+                            "options": {},
+                            "type": "uint32",
+                            "name": "min_removal_delta",
+                            "id": 2
+                        },
+                        {
+                            "rule": "repeated",
+                            "options": {},
+                            "type": "string",
+                            "name": "public_key_additions",
+                            "id": 3
+                        },
+                        {
+                            "rule": "repeated",
+                            "options": {},
+                            "type": "string",
+                            "name": "public_key_deletions",
+                            "id": 4
+                        }
+                    ],
+                    "enums": [],
+                    "messages": [],
+                    "options": {},
+                    "oneofs": {}
+                },
+                {
+                    "name": "NEM2AccountAddressRestrictionTransaction",
+                    "fields": [
+                        {
+                            "rule": "optional",
+                            "options": {},
+                            "type": "NEM2AccountRestrictionFlags",
+                            "name": "restriction_type",
+                            "id": 1
+                        },
+                        {
+                            "rule": "repeated",
+                            "options": {},
+                            "type": "NEM2Address",
+                            "name": "restriction_additions",
+                            "id": 2
+                        },
+                        {
+                            "rule": "repeated",
+                            "options": {},
+                            "type": "NEM2Address",
+                            "name": "restriction_deletions",
+                            "id": 3
+                        }
+                    ],
+                    "enums": [],
+                    "messages": [],
+                    "options": {},
+                    "oneofs": {}
+                },
+                {
+                    "name": "NEM2AccountMosaicRestrictionTransaction",
+                    "fields": [
+                        {
+                            "rule": "optional",
+                            "options": {},
+                            "type": "NEM2AccountRestrictionFlags",
+                            "name": "restriction_type",
+                            "id": 1
+                        },
+                        {
+                            "rule": "repeated",
+                            "options": {},
+                            "type": "string",
+                            "name": "restriction_additions",
+                            "id": 2
+                        },
+                        {
+                            "rule": "repeated",
+                            "options": {},
+                            "type": "string",
+                            "name": "restriction_deletions",
+                            "id": 3
+                        }
+                    ],
+                    "enums": [],
+                    "messages": [],
+                    "options": {},
+                    "oneofs": {}
+                },
+                {
+                    "name": "NEM2AccountOperationRestrictionTransaction",
+                    "fields": [
+                        {
+                            "rule": "optional",
+                            "options": {},
+                            "type": "NEM2AccountRestrictionFlags",
+                            "name": "restriction_type",
+                            "id": 1
+                        },
+                        {
+                            "rule": "repeated",
+                            "options": {},
+                            "type": "NEM2EntityType",
+                            "name": "restriction_additions",
+                            "id": 2
+                        },
+                        {
+                            "rule": "repeated",
+                            "options": {},
+                            "type": "NEM2EntityType",
+                            "name": "restriction_deletions",
+                            "id": 3
                         }
                     ],
                     "enums": [],

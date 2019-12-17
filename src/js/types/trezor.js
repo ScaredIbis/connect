@@ -419,7 +419,11 @@ export type NEM2SignTxMessage = {
     secret_lock?: NEM2SecretLock,
     secret_proof?: NEM2SecretProof,
     hash_lock?: NEM2HashLock,
-    aggregate?: NEM2Aggregate
+    aggregate?: NEM2Aggregate,
+    multisig_modification?: NEM2MultisigModification,
+    account_address_restriction?: NEM2AccountAddressRestrictionTransaction,
+    account_mosaic_restriction?: NEM2AccountMosaicRestrictionTransaction,
+    account_operation_restriction?: NEM2AccountOperationRestrictionTransaction
 }
 
 export type NEM2SignedTx = {
@@ -559,6 +563,32 @@ export type NEM2Aggregate = {
     cosignatures?: Array<NEM2Cosignatures>
 }
 
+export type NEM2MultisigModification = {
+    min_approval_delta: number,
+    min_removal_delta: number,
+    public_key_additions: string[],
+    public_key_deletions: string[],
+}
+
+export type NEM2AccountAddressRestrictionTransaction = {
+    restriction_type: number,
+    restriction_additions: NEM2Address[],
+    restriction_deletions: NEM2Address[]
+}
+
+export type NEM2AccountMosaicRestrictionTransaction = {
+    restriction_type: number,
+    restriction_additions: string[],
+    restriction_deletions: string[]
+}
+
+export type NEM2AccountOperationRestrictionTransaction = {
+    restriction_type: number,
+    restriction_additions: number[],
+    restriction_deletions: number[]
+}
+
+
 export type NEM2InnerTransaction = {
     common: NEM2EmbeddedTransactionCommon,
     transfer?: NEM2Transfer,
@@ -572,18 +602,17 @@ export type NEM2InnerTransaction = {
     account_metadata?: NEM2AccountMetadata,
     secret_lock?: NEM2SecretLock,
     secret_proof?: NEM2SecretProof,
-    hash_lock?: NEM2HashLock
+    hash_lock?: NEM2HashLock,
+    multisig_modification?: NEM2MultisigModification,
+    account_address_restriction?: NEM2AccountAddressRestrictionTransaction,
+    account_mosaic_restriction?: NEM2AccountMosaicRestrictionTransaction,
+    account_operation_restriction?: NEM2AccountOperationRestrictionTransaction
 }
 
 export type NEM2Cosignatures = {
     signature: string,
     public_key: string
 }
-// export type NEM2SignedTx = {
-//     payload: ?string,
-//     hash: ?string,
-//     signature: ?string,
-// }
 
 // Stellar types
 
