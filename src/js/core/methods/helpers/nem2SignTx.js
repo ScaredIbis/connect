@@ -158,18 +158,24 @@ const transferMessage = (tx: $NEM2Transaction): NEM2Transfer => {
 
 const mosaicDefinitionMessage = (tx: $NEM2Transaction): NEM2MosaicDefinition => {
     validateParams(tx, [
-        { name: 'nonce', type: 'object', obligatory: true },
         { name: 'id', type: 'string', obligatory: true },
         { name: 'flags', type: 'number', obligatory: true },
         { name: 'divisibility', type: 'number', obligatory: true },
         { name: 'duration', type: 'string', obligatory: true },
     ]);
-    validateParams(tx.nonce, [
-        { name: 'nonce', type: 'object', obligatory: true },
-    ]);
+    
+    let nonce = null;
+    // Validate nonce manually
+    if (typeof tx.nonce === 'number') {
+        nonce = tx.nonce;
+    } else if (typeof tx.nonce === 'object' && typeof tx.nonce.nonce === 'object') {
+        nonce = parseInt("0x" + buf2hex(tx.nonce.nonce));
+    } else {
+        throw invalidParameter("Parameter nonce has invalid type.");
+    }
 
     return {
-        nonce: parseInt("0x" + buf2hex(tx.nonce.nonce)),
+        nonce: nonce,
         mosaic_id: tx.id,
         flags: tx.flags,
         divisibility: tx.divisibility,
