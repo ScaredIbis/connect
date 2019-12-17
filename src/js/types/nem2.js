@@ -192,7 +192,7 @@ export type AccountOperationRestrictionTransaction = {
 }
 
 export type Aggregate = {
-    transactions: Array<Transaction>,
+    transactions: Array<Object>,
     cosignatures: Array<Cosignatures>
 }
 
