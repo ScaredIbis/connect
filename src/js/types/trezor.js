@@ -491,6 +491,10 @@ export type NEM2MosaicSupply = {
     delta: string
 }
 
+export type NEM2PublicKey = {
+    public_key: ?string
+}
+
 export type NEM2NamespaceRegistration = {
     id: string,
     parent_id?: string,
