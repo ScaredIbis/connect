@@ -443,11 +443,9 @@ export type NEM2MosaicDefinition = {
     duration: ?string,
 }
 
-// export type NEM2SignedTx = {
-//     payload: ?string,
-//     hash: ?string,
-//     signature: ?string,
-// }
+export type NEM2PublicKey = {
+    public_key: ?string
+}
 
 // Stellar types
 

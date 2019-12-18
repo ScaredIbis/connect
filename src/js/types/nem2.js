@@ -51,10 +51,9 @@ export type Transaction = {
 
 // get public key
 
-export type NEM2Publickey = {
-    address: string,
-    path: Array<number>,
-    serializedPath: string,
+export type $NEM2Publickey = {
+    path: $Path,
+    showDisplay: boolean
 }
 
 // sign transaction
@@ -67,5 +66,14 @@ export type $NEM2SignTransaction = $Common & {
 export type NEM2SignTransaction$ = {
     success: true,
     payload: NEM2SignedTx,
+} | Unsuccessful$;
+
+export type NEM2Publickey$ = {
+    success: true,
+    payload: {
+        path: $Path,
+        publicKey: string,
+        serializedPath: string
+    },    
 } | Unsuccessful$;
 
