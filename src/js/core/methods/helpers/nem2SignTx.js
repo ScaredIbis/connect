@@ -85,10 +85,6 @@ export const TX_TYPES = {
     'accountOperationRestriction': NEM2_ACCOUNT_OPERATION_RESTRICTION,
 };
 
-function buf2hex(buffer) {
-    return Array.prototype.map.call(new Uint8Array(buffer), x => ('00' + x.toString(16)).slice(-2)).join('');
-}
-
 const getCommon = (tx: $NEM2Transaction): NEM2TransactionCommon => {
     validateParams(tx, [
         { name: 'type', type: 'number', obligatory: true },
@@ -105,6 +101,10 @@ const getCommon = (tx: $NEM2Transaction): NEM2TransactionCommon => {
         deadline: tx.deadline,
     };
 };
+
+function readUint32At(bytes, index) {
+  return (bytes[index] + (bytes[index + 1] << 8) + (bytes[index + 2] << 16) + (bytes[index + 3] << 24)) >>> 0;
+}
 
 const getEmbeddedCommon = (tx: $NEM2Transaction): NEM2EmbeddedTransactionCommon => {
     validateParams(tx, [
@@ -166,13 +166,13 @@ const mosaicDefinitionMessage = (tx: $NEM2Transaction): NEM2MosaicDefinition => 
         { name: 'divisibility', type: 'number', obligatory: true },
         { name: 'duration', type: 'string', obligatory: true },
     ]);
-    
+
     let nonce = null;
     // Validate nonce manually
     if (typeof tx.nonce === 'number') {
         nonce = tx.nonce;
     } else if (typeof tx.nonce === 'object' && typeof tx.nonce.nonce === 'object') {
-        nonce = parseInt("0x" + buf2hex(tx.nonce.nonce));
+        nonce = readUint32At(tx.nonce.nonce, 0);
     } else {
         throw invalidParameter("Parameter nonce has invalid type.");
     }
