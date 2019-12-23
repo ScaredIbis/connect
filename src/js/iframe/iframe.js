@@ -7,7 +7,6 @@ import * as UI from '../constants/ui';
 
 import { parse as parseSettings } from '../data/ConnectSettings';
 import DataManager from '../data/DataManager';
-import type { ConnectSettings } from '../data/ConnectSettings';
 
 import { Core, init as initCore, initTransport } from '../core/Core';
 import { parseMessage } from '../message';
@@ -17,14 +16,13 @@ import type { CoreMessage, PostMessageEvent } from '../types';
 
 import Log, { init as initLog } from '../utils/debug';
 import { sendMessage } from '../utils/windowsUtils';
-import { checkBrowser, state as browserState } from '../utils/browser';
 import { getOrigin } from '../env/browser/networkUtils';
-import { load as loadStorage, PERMISSIONS_KEY } from './storage';
+import { suggestBridgeInstaller } from '../env/browser/browserUtils';
+import { load as loadStorage, PERMISSIONS_KEY } from '../storage';
 let _core: Core;
 
 // custom log
 const _log: Log = initLog('IFrame');
-
 let _popupMessagePort: ?(MessagePort | BroadcastChannel);
 
 // Wrapper which listen events from Core
@@ -61,22 +59,17 @@ const handleMessage = (event: PostMessageEvent): void => {
 
     // popup handshake initialization process, get reference to message channel
     if (data.type === POPUP.HANDSHAKE && event.origin === window.location.origin) {
-        if (!_popupMessagePort) {
-            fail('POPUP.OPENED: popupMessagePort not found');
-            return;
-        }
-
-        if (!_core) {
-            fail('POPUP.OPENED: Core not initialized');
-            return;
-        }
-
-        if (_popupMessagePort instanceof MessagePort) {
-            if (event.ports.length < 1) {
-                fail('POPUP.OPENED: event.ports not found');
+        if (!_popupMessagePort || _popupMessagePort instanceof MessagePort) {
+            if (!event.ports || event.ports.length < 1) {
+                fail('POPUP.HANDSHAKE: popupMessagePort not found');
                 return;
             }
             _popupMessagePort = event.ports[0];
+        }
+
+        if (!_core) {
+            fail('POPUP.HANDSHAKE: Core not initialized');
+            return;
         }
 
         const method = _core.getCurrentMethod()[0];
@@ -138,6 +131,11 @@ const postMessage = (message: CoreMessage): void => {
         return;
     }
 
+    if (message.event === TRANSPORT_EVENT) {
+        // add preferred bridge installer
+        message.payload.bridge = suggestBridgeInstaller();
+    }
+
     // eslint-disable-next-line no-use-before-define
     if (usingPopup && targetUiEvent(message)) {
         if (_popupMessagePort) {
@@ -183,7 +181,7 @@ const filterDeviceEvent = (message: CoreMessage): boolean => {
 
 const init = async (payload: any, origin: string) => {
     if (DataManager.getSettings('origin')) return; // already initialized
-    const parsedSettings: ConnectSettings = parseSettings({ ...payload.settings, extension: payload.extension });
+    const parsedSettings = parseSettings({ ...payload.settings, extension: payload.extension });
     // set origin manually
     parsedSettings.origin = !origin || origin === 'null' ? payload.settings.origin : origin;
 
@@ -200,19 +198,12 @@ const init = async (payload: any, origin: string) => {
         _core = await initCore(parsedSettings);
         _core.on(CORE_EVENT, postMessage);
 
-        // check if browser is supported
-        checkBrowser();
-        if (browserState.supported) {
-            // initialize transport and wait for the first transport event (start or error)
-            await initTransport(parsedSettings);
-        }
+        // initialize transport and wait for the first transport event (start or error)
+        await initTransport(parsedSettings);
 
-        postMessage(new UiMessage(IFRAME.LOADED, {
-            browser: browserState,
-        }));
+        postMessage(new UiMessage(IFRAME.LOADED));
     } catch (error) {
         postMessage(new UiMessage(IFRAME.ERROR, {
-            browser: browserState,
             error: error.message,
         }));
     }

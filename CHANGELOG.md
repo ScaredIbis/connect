@@ -1,3 +1,25 @@
+# 8.0.12
+#### Added
+- Peercoin support
+#### Updated
+- ZCash Blossom fork (updated branch_id)
+
+# 8.0.11
+#### Added
+- React native transport
+#### Updated
+- TRANSPORT_EVENT "bridge" field send only in browser env. Whole logic moved from Core/DataManager to iframe
+
+# 8.0.10
+#### Added
+- Jest unit tests
+#### Fixed
+- Browser validation logic moved from Core to popup, not restricted anymore
+- popupMessagePort assignment for browsers without BroadcastChannel support
+- multiple eslint/flow fixes
+#### Updated
+- Update outdated and remove unused node_modules dependencies
+
 # 8.0.9
 #### Fixed
 - `getAccountInfo` bump @trezor/blockchain-link version with fixed ripple auto reconnection and ripple-lib issue https://github.com/ripple/ripple-lib/issues/1066

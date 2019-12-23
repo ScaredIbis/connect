@@ -3,14 +3,13 @@
 import AbstractMethod from './AbstractMethod';
 import { validateParams, validateCoinPath, getFirmwareRange } from './helpers/paramsValidator';
 import { validatePath, getLabel, getSerializedPath } from '../../utils/pathUtils';
-import { getBitcoinNetwork, fixCoinInfoNetwork } from '../../data/CoinInfo';
+import { getBitcoinNetwork, fixCoinInfoNetwork, getUniqueNetworks } from '../../data/CoinInfo';
 import { NO_COIN_INFO } from '../../constants/errors';
-import { uniqBy } from 'lodash';
 
 import * as UI from '../../constants/ui';
 import { UiMessage } from '../../message/builder';
 
-import type { Address } from '../../types/trezor';
+import type { Address, MultisigRedeemScriptType, InputScriptType } from '../../types/trezor';
 import type { CoreMessage, UiPromiseResponse, BitcoinNetworkInfo } from '../../types';
 
 type Batch = {
@@ -18,6 +17,8 @@ type Batch = {
     address: ?string,
     coinInfo: BitcoinNetworkInfo,
     showOnTrezor: boolean,
+    multisig?: MultisigRedeemScriptType,
+    scriptType?: InputScriptType,
 }
 
 type Params = Array<Batch>;
@@ -34,7 +35,7 @@ export default class GetAddress extends AbstractMethod {
         this.requiredPermissions = ['read'];
 
         // create a bundle with only one batch if bundle doesn't exists
-        this.hasBundle = message.payload.hasOwnProperty('bundle');
+        this.hasBundle = Object.prototype.hasOwnProperty.call(message.payload, 'bundle');
         const payload: Object = !this.hasBundle ? { ...message.payload, bundle: [ ...message.payload ] } : message.payload;
 
         // validate bundle type
@@ -51,9 +52,11 @@ export default class GetAddress extends AbstractMethod {
                 { name: 'coin', type: 'string' },
                 { name: 'address', type: 'string' },
                 { name: 'showOnTrezor', type: 'boolean' },
+                { name: 'multisig', type: 'object' },
+                { name: 'scriptType', type: 'string' },
             ]);
 
-            const path: Array<number> = validatePath(batch.path, 3);
+            const path: Array<number> = validatePath(batch.path, 1);
             let coinInfo: ?BitcoinNetworkInfo;
             if (batch.coin) {
                 coinInfo = getBitcoinNetwork(batch.coin);
@@ -66,7 +69,7 @@ export default class GetAddress extends AbstractMethod {
             }
 
             let showOnTrezor: boolean = true;
-            if (batch.hasOwnProperty('showOnTrezor')) {
+            if (Object.prototype.hasOwnProperty.call(batch, 'showOnTrezor')) {
                 showOnTrezor = batch.showOnTrezor;
             }
 
@@ -85,6 +88,8 @@ export default class GetAddress extends AbstractMethod {
                 address: batch.address,
                 coinInfo,
                 showOnTrezor,
+                multisig: batch.multisig,
+                scriptType: batch.scriptType,
             });
         });
 
@@ -96,8 +101,8 @@ export default class GetAddress extends AbstractMethod {
         if (bundle.length === 1) {
             this.info = getLabel('Export #NETWORK address', bundle[0].coinInfo);
         } else {
-            const requestedNetworks: Array<?BitcoinNetworkInfo> = bundle.map(b => b.coinInfo);
-            const uniqNetworks = uniqBy(requestedNetworks, (ci) => { return ci ? ci.shortcut : null; });
+            const requestedNetworks = bundle.map(b => b.coinInfo);
+            const uniqNetworks = getUniqueNetworks(requestedNetworks);
             if (uniqNetworks.length === 1 && uniqNetworks[0]) {
                 this.info = getLabel('Export multiple #NETWORK addresses', uniqNetworks[0]);
             } else {
@@ -168,7 +173,9 @@ export default class GetAddress extends AbstractMethod {
                 const silent = await this.device.getCommands().getAddress(
                     batch.path,
                     batch.coinInfo,
-                    false
+                    false,
+                    batch.multisig,
+                    batch.scriptType,
                 );
                 if (typeof batch.address === 'string') {
                     if (batch.address !== silent.address) {
@@ -182,7 +189,9 @@ export default class GetAddress extends AbstractMethod {
             const response = await this.device.getCommands().getAddress(
                 batch.path,
                 batch.coinInfo,
-                batch.showOnTrezor
+                batch.showOnTrezor,
+                batch.multisig,
+                batch.scriptType,
             );
             responses.push(response);
 

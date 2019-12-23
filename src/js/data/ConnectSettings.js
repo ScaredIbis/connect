@@ -36,7 +36,7 @@ export type ConnectSettings = {
  * It could be changed by passing values into TrezorConnect.init(...) method
  */
 
-const VERSION: string = '8.0.9';
+const VERSION: string = '8.0.12';
 const versionN: Array<number> = VERSION.split('.').map(s => parseInt(s));
 const DIRECTORY: string = `${ versionN[0] }${ (versionN[1] > 0 ? `.${versionN[1]}` : '') }/`;
 const DEFAULT_DOMAIN: string = `https://connect.trezor.io/${ DIRECTORY }`;
@@ -57,7 +57,7 @@ const initialSettings: ConnectSettings = {
     transportReconnect: false,
     webusb: true,
     pendingTransportEvent: true,
-    supportedBrowser: typeof navigator !== 'undefined' ? !(/Trident|MSIE/.test(navigator.userAgent)) : true,
+    supportedBrowser: typeof navigator !== 'undefined' ? !(/Trident|MSIE|Edge/.test(navigator.userAgent)) : true,
     extension: null,
     manifest: null,
     env: 'web',
@@ -107,7 +107,7 @@ export const parse = (input: ?Object): ConnectSettings => {
     if (!input) return currentSettings;
 
     const settings: ConnectSettings = { ...currentSettings };
-    if (input.hasOwnProperty('debug')) {
+    if (Object.prototype.hasOwnProperty.call(input, 'debug')) {
         if (Array.isArray(input)) {
             // enable log with prefix
         } if (typeof input.debug === 'boolean') {

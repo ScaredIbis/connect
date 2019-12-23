@@ -16,7 +16,7 @@ import TerserPlugin from 'terser-webpack-plugin';
 module.exports = {
     mode: 'production',
     entry: {
-        'trezor-connect': ['@babel/polyfill', `${JS_SRC}index.js`],
+        'trezor-connect': `${JS_SRC}index.js`,
         'iframe': `${JS_SRC}iframe/iframe.js`,
         'popup': `${JS_SRC}popup/popup.js`,
         'webusb': `${JS_SRC}webusb/index.js`,
@@ -88,6 +88,9 @@ module.exports = {
         new webpack.NormalModuleReplacementPlugin(/env\/node$/, './env/browser'),
         new webpack.NormalModuleReplacementPlugin(/env\/node\/workers$/, '../env/browser/workers'),
         new webpack.NormalModuleReplacementPlugin(/env\/node\/networkUtils$/, '../env/browser/networkUtils'),
+        new webpack.ProvidePlugin({
+            Promise: ['es6-promise', 'Promise'],
+        }),
 
         new MiniCssExtractPlugin({
             filename: 'css/[name].[hash].css',

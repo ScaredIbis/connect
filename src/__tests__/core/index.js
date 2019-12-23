@@ -10,6 +10,7 @@ import { cardanoSignTransaction } from './cardanoSignTransaction.spec.js';
 import { getPublicKey } from './getPublicKey.spec.js';
 import { getAddress } from './getAddress.spec.js';
 import { getAddressSegwit } from './getAddressSegwit.spec.js';
+import { getAddressMultisig } from './getAddressMultisig.spec.js';
 import { signMessage } from './signMessage.spec.js';
 import { signMessageSegwit } from './signMessageSegwit.spec.js';
 import { signTransaction } from './signTransaction.spec.js';
@@ -23,6 +24,8 @@ import { signTransactionMultisig } from './signTransactionMultisig.spec.js';
 import { signTransactionMultisigChange } from './signTransactionMultisigChange.spec.js';
 import { signTransactionBech32 } from './signTransactionBech32.spec.js';
 import { signTransactionDoge } from './signTransactionDoge.spec.js';
+import { signTransactionKomodo } from './signTransactionKomodo.spec.js';
+import { signTransactionPeercoin } from './signTransactionPeercoin.spec.js';
 import { verifyMessage } from './verifyMessage.spec.js';
 import { verifyMessageSegwit } from './verifyMessageSegwit.spec.js';
 import { verifyMessageSegwitNative } from './verifyMessageSegwitNative.spec.js';
@@ -60,6 +63,7 @@ export const testFunctions: AvailableTestFunctions = {
     getPublicKey,
     getAddress,
     getAddressSegwit,
+    getAddressMultisig,
     signMessage,
     signMessageSegwit,
     signTransaction,
@@ -73,6 +77,8 @@ export const testFunctions: AvailableTestFunctions = {
     signTransactionMultisigChange,
     signTransactionBech32,
     signTransactionDoge,
+    signTransactionKomodo,
+    signTransactionPeercoin,
     verifyMessage,
     verifyMessageSegwit,
     verifyMessageSegwitNative,

@@ -218,13 +218,33 @@ export default class DeviceCommands {
         return state;
     }
 
-    async getAddress(address_n: Array<number>, coinInfo: BitcoinNetworkInfo, showOnTrezor: boolean): Promise<trezor.Address> {
-        const scriptType: trezor.InputScriptType = getScriptType(address_n);
+    async getAddress(
+        address_n: Array<number>,
+        coinInfo: BitcoinNetworkInfo,
+        showOnTrezor: boolean,
+        multisig?: trezor.MultisigRedeemScriptType,
+        scriptType?: trezor.InputScriptType,
+    ): Promise<trezor.Address> {
+        if (!scriptType) {
+            scriptType = getScriptType(address_n);
+            if (scriptType === 'SPENDMULTISIG' && !multisig) {
+                scriptType = 'SPENDADDRESS';
+            }
+        }
+        if (multisig && multisig.pubkeys) {
+            // convert xpub strings to HDNodeTypes
+            multisig.pubkeys.forEach(pk => {
+                if (typeof pk.node === 'string') {
+                    pk.node = hdnodeUtils.xpubToHDNodeType(pk.node, coinInfo.network);
+                }
+            });
+        }
         const response: Object = await this.typedCall('GetAddress', 'Address', {
             address_n,
             coin_name: coinInfo.name,
             show_display: !!showOnTrezor,
-            script_type: scriptType && scriptType !== 'SPENDMULTISIG' ? scriptType : 'SPENDADDRESS', // script_type 'SPENDMULTISIG' throws Failure_FirmwareError
+            multisig,
+            script_type: scriptType || 'SPENDADDRESS',
         });
 
         return {
@@ -650,12 +670,8 @@ export default class DeviceCommands {
     }
 
     async _commonCall(type: string, msg: Object): Promise<DefaultMessageResponse> {
-        try {
-            const resp = await this.call(type, msg);
-            return await this._filterCommonTypes(resp);
-        } catch (error) {
-            throw error;
-        }
+        const resp = await this.call(type, msg);
+        return this._filterCommonTypes(resp);
     }
 
     async _filterCommonTypes(res: DefaultMessageResponse): Promise<DefaultMessageResponse> {

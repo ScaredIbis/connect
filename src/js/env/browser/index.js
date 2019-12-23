@@ -61,27 +61,21 @@ const handleMessage = (messageEvent: $T.PostMessageEvent): void => {
     // ignore messages from domain other then iframe origin
     if (messageEvent.origin !== iframe.origin) return;
 
-    const message: $T.CoreMessage = parseMessage(messageEvent.data);
-    // TODO: destructuring with type
-    // https://github.com/Microsoft/TypeScript/issues/240
-    // const { id, event, type, data, error }: CoreMessage = message;
-    const id: number = message.id || 0;
-    const event: string = message.event;
-    const type: string = message.type;
-    const payload: any = message.payload;
+    const message = parseMessage(messageEvent.data);
+    const { event, type, payload } = message;
+    const id = message.id || 0;
 
     _log.log('handleMessage', message);
 
     switch (event) {
         case RESPONSE_EVENT :
             if (iframe.messagePromises[id]) {
-                // clear unnecessary fields from message object
-                delete message.type;
-                delete message.event;
-                // delete message.id;
-                // message.__id = id;
                 // resolve message promise (send result of call method)
-                iframe.messagePromises[id].resolve(message);
+                iframe.messagePromises[id].resolve({
+                    id,
+                    success: message.success,
+                    payload,
+                });
                 delete iframe.messagePromises[id];
             } else {
                 _log.warn(`Unknown message id ${id}`);
@@ -137,10 +131,6 @@ export const init = async (settings: Object = {}): Promise<void> => {
         throw ERROR.MANIFEST_NOT_SET;
     }
 
-    if (!_settings.supportedBrowser) {
-        throw ERROR.BROWSER_NOT_SUPPORTED;
-    }
-
     if (_settings.lazyLoad) {
         // reset "lazyLoad" after first use
         _settings.lazyLoad = false;
@@ -166,9 +156,6 @@ export const call = async (params: Object): Promise<Object> => {
 
         if (!_settings.manifest) {
             return { success: false, payload: { error: ERROR.MANIFEST_NOT_SET.message } };
-        }
-        if (!_settings.supportedBrowser) {
-            return { success: false, payload: { error: ERROR.BROWSER_NOT_SUPPORTED.message } };
         }
 
         if (!_popupManager) {
@@ -252,7 +239,6 @@ export const customMessage: $T.CustomMessage = async (params) => {
 
     // TODO: set message listener only if iframe is loaded correctly
     const callback = params.callback;
-    delete params.callback;
     const customMessageListener = async (event: $T.PostMessageEvent) => {
         const data = event.data;
         if (data && data.type === UI.CUSTOM_MESSAGE_REQUEST) {
@@ -266,7 +252,7 @@ export const customMessage: $T.CustomMessage = async (params) => {
     };
     window.addEventListener('message', customMessageListener, false);
 
-    const response = await call({ method: 'customMessage', ...params });
+    const response = await call({ method: 'customMessage', ...params, callback: null });
     window.removeEventListener('message', customMessageListener);
     return response;
 };
@@ -275,7 +261,6 @@ export const requestLogin: $T.RequestLogin = async (params) => {
     // $FlowIssue: property callback not found
     if (typeof params.callback === 'function') {
         const callback = params.callback;
-        delete params.callback; // delete callback value. this field cannot be sent using postMessage function
 
         // TODO: set message listener only if iframe is loaded correctly
         const loginChallengeListener = async (event: $T.PostMessageEvent) => {
@@ -300,7 +285,7 @@ export const requestLogin: $T.RequestLogin = async (params) => {
 
         window.addEventListener('message', loginChallengeListener, false);
 
-        const response = await call({ method: 'requestLogin', ...params, asyncChallenge: true });
+        const response = await call({ method: 'requestLogin', ...params, asyncChallenge: true, callback: null });
         window.removeEventListener('message', loginChallengeListener);
         return response;
     } else {
