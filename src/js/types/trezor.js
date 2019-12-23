@@ -403,25 +403,73 @@ export type NEMSignTxMessage = {
 
 // TODO: public key
 
+export type NEM2SignTxMessage = {
+    address_n: Array<number>,
+    generation_hash?: string,
+    transaction: NEM2TransactionCommon,
+    transfer?: NEM2Transfer,
+    mosaic_definition?: NEM2MosaicDefinition,
+    mosaic_supply?: NEM2MosaicSupply,
+    namespace_registration?: NEM2NamespaceRegistration,
+    address_alias?: NEM2AddressAlias,
+    mosaic_alias?: NEM2MosaicAlias,
+    namespace_metadata?: NEM2NamespaceMetadata,
+    mosaic_metadata?: NEM2MosaicMetadata,
+    account_metadata?: NEM2AccountMetadata,
+    secret_lock?: NEM2SecretLock,
+    secret_proof?: NEM2SecretProof,
+    hash_lock?: NEM2HashLock,
+    aggregate?: NEM2Aggregate,
+    multisig_modification?: NEM2MultisigModification,
+    account_address_restriction?: NEM2AccountAddressRestrictionTransaction,
+    account_mosaic_restriction?: NEM2AccountMosaicRestrictionTransaction,
+    account_operation_restriction?: NEM2AccountOperationRestrictionTransaction,
+    cosigning?: string
+}
+
+export type NEM2SignedTx = {
+    payload: string,
+    hash: string,
+    signature: string
+}
+
+export type NEM2CosignatureSignedTx = {
+    parent_hash: string,
+    signature: string
+}
+
 export type NEM2TransactionCommon = {
-    type: ?Array<number>,
-    networkType: ?number,
-    version: ?number,
-    maxFee: ?string, // uint64
-    deadline: ?string, // uint64
-    signer: ?string,
-    signature: ?string,
+    type: number,
+    network_type: number,
+    version: number,
+    max_fee: string, // uint64
+    deadline: string, // uint64
+    signer?: ?string,
+    signature?: ?string,
+}
+
+export type NEM2EmbeddedTransactionCommon = {
+    type: number,
+    network_type: number,
+    version: number,
+    public_key: string,
+    signature?: ?string,
 }
 
 export type NEM2Mosaic = {
-    namespace: ?string,
-    mosaic: ?string,
-    quantity: ?number,
+    id: string,
+    amount: string
 }
+
+export type NetworkType =
+    104 // MAIN_NET
+  | 152 // TEST_NET
+  | 96 // MIJIN
+  | 144 // MIJIN_TEST
 
 export type NEM2Address = {
     address: String,
-    networkType: NetworkType,
+    network_type: NetworkType,
 }
 
 type NEM2Message = {
@@ -430,21 +478,150 @@ type NEM2Message = {
 }
 
 export type NEM2Transfer = {
-    recipientAddress: NEM2Address,
-    mosaics: ?Array<NEM2Mosaic>,
-    message: ?NEM2Message,
+    recipient_address: NEM2Address,
+    mosaics: Array<NEM2Mosaic>,
+    message: NEM2Message,
 }
 
 export type NEM2MosaicDefinition = {
-    nonce: ?number,
-    mosaic_id: ?string,
-    flags: ?number,
-    divisibility: ?number,
-    duration: ?string,
+    nonce: number,
+    mosaic_id: string,
+    flags: number,
+    divisibility: number,
+    duration: string,
+}
+
+export type NEM2MosaicSupply = {
+    mosaic_id: string,
+    action: number,
+    delta: string
 }
 
 export type NEM2PublicKey = {
     public_key: ?string
+}
+
+export type NEM2NamespaceRegistration = {
+    id: string,
+    parent_id?: string,
+    duration?: ?string,
+    namespace_name: string,
+    registration_type: number,
+}
+
+export type NEM2AddressAlias = {
+    namespace_id: string,
+    alias_action: number,
+    address: NEM2Address,
+}
+
+export type NEM2MosaicAlias = {
+    namespace_id: string,
+    mosaic_id: string,
+    alias_action: number
+}
+
+export type NEM2NamespaceMetadata = {
+    target_public_key: string,
+    scoped_metadata_key: string,
+    target_namespace_id: string,
+    value_size_delta: number,
+    value_size: number,
+    value: string,
+}
+
+export type NEM2MosaicMetadata = {
+    target_public_key: string,
+    scoped_metadata_key: string,
+    target_mosaic_id: string,
+    value_size_delta: number,
+    value_size: number,
+    value: string,
+}
+
+export type NEM2AccountMetadata = {
+    target_public_key: string,
+    scoped_metadata_key: string,
+    value_size_delta: number,
+    value_size: number,
+    value: string,
+}
+
+export type NEM2SecretLock = {
+    mosaic: NEM2Mosaic,
+    duration: string,
+    hash_algorithm: number,
+    secret: string,
+    recipient_address: NEM2Address
+}
+
+export type NEM2SecretProof = {
+    hash_algorithm: number,
+    secret: string,
+    proof: string,
+    recipient_address: NEM2Address
+}
+
+export type NEM2HashLock = {
+    mosaic: NEM2Mosaic,
+    duration: string,
+    hash: string
+}
+
+export type NEM2Aggregate = {
+    inner_transactions: Array<NEM2InnerTransaction>,
+    cosignatures?: Array<NEM2Cosignatures>
+}
+
+export type NEM2MultisigModification = {
+    min_approval_delta: number,
+    min_removal_delta: number,
+    public_key_additions: string[],
+    public_key_deletions: string[],
+}
+
+export type NEM2AccountAddressRestrictionTransaction = {
+    restriction_type: number,
+    restriction_additions: NEM2Address[],
+    restriction_deletions: NEM2Address[]
+}
+
+export type NEM2AccountMosaicRestrictionTransaction = {
+    restriction_type: number,
+    restriction_additions: string[],
+    restriction_deletions: string[]
+}
+
+export type NEM2AccountOperationRestrictionTransaction = {
+    restriction_type: number,
+    restriction_additions: number[],
+    restriction_deletions: number[]
+}
+
+
+export type NEM2InnerTransaction = {
+    common: NEM2EmbeddedTransactionCommon,
+    transfer?: NEM2Transfer,
+    mosaic_definition?: NEM2MosaicDefinition,
+    mosaic_supply?: NEM2MosaicSupply,
+    namespace_registration?: NEM2NamespaceRegistration,
+    address_alias?: NEM2AddressAlias,
+    mosaic_alias?: NEM2MosaicAlias,
+    namespace_metadata?: NEM2NamespaceMetadata,
+    mosaic_metadata?: NEM2MosaicMetadata,
+    account_metadata?: NEM2AccountMetadata,
+    secret_lock?: NEM2SecretLock,
+    secret_proof?: NEM2SecretProof,
+    hash_lock?: NEM2HashLock,
+    multisig_modification?: NEM2MultisigModification,
+    account_address_restriction?: NEM2AccountAddressRestrictionTransaction,
+    account_mosaic_restriction?: NEM2AccountMosaicRestrictionTransaction,
+    account_operation_restriction?: NEM2AccountOperationRestrictionTransaction
+}
+
+export type NEM2Cosignatures = {
+    signature: string,
+    public_key: string
 }
 
 // Stellar types
@@ -588,7 +765,7 @@ export type TezosRevealOp = {
 
 export type TezosParametersManager = {
     set_delegate?: Uint8Array,
-    cancel_delegate?: bool,
+    cancel_delegate?: boolean,
     transfer?: TezosManagerTransfer,
 };
 
