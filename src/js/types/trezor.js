@@ -466,16 +466,16 @@ export type NEM2Mosaic = {
     amount: string
 }
 
-export type NEM2NetworkType = {
+export type NEM2NetworkType =
     104 // MAIN_NET
   | 152 // TEST_NET
   | 96 // MIJIN
   | 144 // MIJIN_TEST
-}
+
 
 export type NEM2Address = {
     address: String,
-    network_type: NetworkType,
+    network_type: NEM2NetworkType,
 }
 
 type NEM2Message = {
@@ -504,7 +504,7 @@ export type NEM2MosaicSupply = {
 }
 
 export type NEM2PublicKey = {
-    public_key: ?string
+    public_key: string
 }
 
 export type NEM2NamespaceRegistration = {
