@@ -1691,6 +1691,10 @@
                             "id": 12
                         },
                         {
+                            "name": "Failure_WipeCodeMismatch",
+                            "id": 13
+                        },
+                        {
                             "name": "Failure_FirmwareError",
                             "id": 99
                         }
@@ -1711,13 +1715,6 @@
                     "type": "ButtonRequestType",
                     "name": "code",
                     "id": 1
-                },
-                {
-                    "rule": "optional",
-                    "options": {},
-                    "type": "string",
-                    "name": "data",
-                    "id": 2
                 }
             ],
             "enums": [
@@ -1838,6 +1835,14 @@
                         {
                             "name": "PinMatrixRequestType_NewSecond",
                             "id": 3
+                        },
+                        {
+                            "name": "PinMatrixRequestType_WipeCodeFirst",
+                            "id": 4
+                        },
+                        {
+                            "name": "PinMatrixRequestType_WipeCodeSecond",
+                            "id": 5
                         }
                     ],
                     "options": {}
@@ -2339,6 +2344,27 @@
                     "type": "string",
                     "name": "input",
                     "id": 3
+                },
+                {
+                    "rule": "optional",
+                    "options": {},
+                    "type": "uint32",
+                    "name": "x",
+                    "id": 4
+                },
+                {
+                    "rule": "optional",
+                    "options": {},
+                    "type": "uint32",
+                    "name": "y",
+                    "id": 5
+                },
+                {
+                    "rule": "optional",
+                    "options": {},
+                    "type": "bool",
+                    "name": "wait",
+                    "id": 6
                 }
             ],
             "enums": [
@@ -2370,6 +2396,22 @@
             "oneofs": {}
         },
         {
+            "name": "DebugLinkLayout",
+            "fields": [
+                {
+                    "rule": "repeated",
+                    "options": {},
+                    "type": "string",
+                    "name": "lines",
+                    "id": 1
+                }
+            ],
+            "enums": [],
+            "messages": [],
+            "options": {},
+            "oneofs": {}
+        },
+        {
             "name": "DebugLinkGetState",
             "fields": [
                 {
@@ -2385,6 +2427,13 @@
                     "type": "bool",
                     "name": "wait_word_pos",
                     "id": 2
+                },
+                {
+                    "rule": "optional",
+                    "options": {},
+                    "type": "bool",
+                    "name": "wait_layout",
+                    "id": 3
                 }
             ],
             "enums": [],
@@ -2478,6 +2527,13 @@
                     "type": "uint32",
                     "name": "mnemonic_type",
                     "id": 12
+                },
+                {
+                    "rule": "repeated",
+                    "options": {},
+                    "type": "string",
+                    "name": "layout_lines",
+                    "id": 13
                 }
             ],
             "enums": [],
@@ -4480,6 +4536,27 @@
                     "type": "BackupType",
                     "name": "backup_type",
                     "id": 31
+                },
+                {
+                    "rule": "optional",
+                    "options": {},
+                    "type": "bool",
+                    "name": "sd_card_present",
+                    "id": 32
+                },
+                {
+                    "rule": "optional",
+                    "options": {},
+                    "type": "bool",
+                    "name": "sd_protection",
+                    "id": 33
+                },
+                {
+                    "rule": "optional",
+                    "options": {},
+                    "type": "bool",
+                    "name": "wipe_code_protection",
+                    "id": 34
                 }
             ],
             "enums": [
@@ -4676,6 +4753,22 @@
             "oneofs": {}
         },
         {
+            "name": "ChangeWipeCode",
+            "fields": [
+                {
+                    "rule": "optional",
+                    "options": {},
+                    "type": "bool",
+                    "name": "remove",
+                    "id": 1
+                }
+            ],
+            "enums": [],
+            "messages": [],
+            "options": {},
+            "oneofs": {}
+        },
+        {
             "name": "SdProtect",
             "fields": [
                 {
@@ -4808,13 +4901,6 @@
                 {
                     "rule": "optional",
                     "options": {},
-                    "type": "HDNodeType",
-                    "name": "node",
-                    "id": 2
-                },
-                {
-                    "rule": "optional",
-                    "options": {},
                     "type": "string",
                     "name": "pin",
                     "id": 3
@@ -4829,7 +4915,7 @@
                 {
                     "rule": "optional",
                     "options": {
-                        "default": "english"
+                        "default": "en-US"
                     },
                     "type": "string",
                     "name": "language",
@@ -4855,6 +4941,20 @@
                     "type": "uint32",
                     "name": "u2f_counter",
                     "id": 8
+                },
+                {
+                    "rule": "optional",
+                    "options": {},
+                    "type": "bool",
+                    "name": "needs_backup",
+                    "id": 9
+                },
+                {
+                    "rule": "optional",
+                    "options": {},
+                    "type": "bool",
+                    "name": "no_backup",
+                    "id": 10
                 }
             ],
             "enums": [],
@@ -4898,7 +4998,7 @@
                 {
                     "rule": "optional",
                     "options": {
-                        "default": "english"
+                        "default": "en-US"
                     },
                     "type": "string",
                     "name": "language",
@@ -5006,7 +5106,7 @@
                 {
                     "rule": "optional",
                     "options": {
-                        "default": "english"
+                        "default": "en-US"
                     },
                     "type": "string",
                     "name": "language",
@@ -5121,6 +5221,30 @@
         },
         {
             "name": "SetU2FCounter",
+            "fields": [
+                {
+                    "rule": "optional",
+                    "options": {},
+                    "type": "uint32",
+                    "name": "u2f_counter",
+                    "id": 1
+                }
+            ],
+            "enums": [],
+            "messages": [],
+            "options": {},
+            "oneofs": {}
+        },
+        {
+            "name": "GetNextU2FCounter",
+            "fields": [],
+            "enums": [],
+            "messages": [],
+            "options": {},
+            "oneofs": {}
+        },
+        {
+            "name": "NextU2FCounter",
             "fields": [
                 {
                     "rule": "optional",
@@ -9747,9 +9871,9 @@
                         {
                             "rule": "optional",
                             "options": {},
-                            "type": "TezosContractID",
+                            "type": "bytes",
                             "name": "source",
-                            "id": 1
+                            "id": 7
                         },
                         {
                             "rule": "optional",
@@ -9798,9 +9922,9 @@
                         {
                             "rule": "optional",
                             "options": {},
-                            "type": "TezosContractID",
+                            "type": "bytes",
                             "name": "source",
-                            "id": 1
+                            "id": 9
                         },
                         {
                             "rule": "optional",
@@ -9850,10 +9974,72 @@
                             "type": "bytes",
                             "name": "parameters",
                             "id": 8
+                        },
+                        {
+                            "rule": "optional",
+                            "options": {},
+                            "type": "TezosParametersManager",
+                            "name": "parameters_manager",
+                            "id": 10
                         }
                     ],
                     "enums": [],
-                    "messages": [],
+                    "messages": [
+                        {
+                            "name": "TezosParametersManager",
+                            "fields": [
+                                {
+                                    "rule": "optional",
+                                    "options": {},
+                                    "type": "bytes",
+                                    "name": "set_delegate",
+                                    "id": 1
+                                },
+                                {
+                                    "rule": "optional",
+                                    "options": {},
+                                    "type": "bool",
+                                    "name": "cancel_delegate",
+                                    "id": 2
+                                },
+                                {
+                                    "rule": "optional",
+                                    "options": {},
+                                    "type": "TezosManagerTransfer",
+                                    "name": "transfer",
+                                    "id": 3
+                                }
+                            ],
+                            "enums": [],
+                            "messages": [
+                                {
+                                    "name": "TezosManagerTransfer",
+                                    "fields": [
+                                        {
+                                            "rule": "optional",
+                                            "options": {},
+                                            "type": "TezosContractID",
+                                            "name": "destination",
+                                            "id": 1
+                                        },
+                                        {
+                                            "rule": "optional",
+                                            "options": {},
+                                            "type": "uint64",
+                                            "name": "amount",
+                                            "id": 2
+                                        }
+                                    ],
+                                    "enums": [],
+                                    "messages": [],
+                                    "options": {},
+                                    "oneofs": {}
+                                }
+                            ],
+                            "options": {},
+                            "oneofs": {}
+                        }
+                    ],
                     "options": {},
                     "oneofs": {}
                 },
@@ -9863,9 +10049,9 @@
                         {
                             "rule": "optional",
                             "options": {},
-                            "type": "TezosContractID",
+                            "type": "bytes",
                             "name": "source",
-                            "id": 1
+                            "id": 12
                         },
                         {
                             "rule": "optional",
@@ -9949,9 +10135,9 @@
                         {
                             "rule": "optional",
                             "options": {},
-                            "type": "TezosContractID",
+                            "type": "bytes",
                             "name": "source",
-                            "id": 1
+                            "id": 7
                         },
                         {
                             "rule": "optional",
@@ -10482,6 +10668,18 @@
                     "id": 79
                 },
                 {
+                    "name": "MessageType_GetNextU2FCounter",
+                    "id": 80
+                },
+                {
+                    "name": "MessageType_NextU2FCounter",
+                    "id": 81
+                },
+                {
+                    "name": "MessageType_ChangeWipeCode",
+                    "id": 82
+                },
+                {
                     "name": "MessageType_FirmwareErase",
                     "id": 6
                 },
@@ -10614,6 +10812,10 @@
                     "id": 113
                 },
                 {
+                    "name": "MessageType_DebugLinkLayout",
+                    "id": 9001
+                },
+                {
                     "name": "MessageType_EthereumGetPublicKey",
                     "id": 450
                 },
@@ -10676,6 +10878,26 @@
                 {
                     "name": "MessageType_NEMDecryptedMessage",
                     "id": 76
+                },
+                {
+                    "name": "MessageType_NEM2GetPublicKey",
+                    "id": 77
+                },
+                {
+                    "name": "MessageType_NEM2PublicKey",
+                    "id": 78
+                },
+                {
+                    "name": "MessageType_NEM2SignTx",
+                    "id": 79
+                },
+                {
+                    "name": "MessageType_NEM2SignedTx",
+                    "id": 80
+                },
+                {
+                    "name": "MessageType_NEM2CosignatureSignedTx",
+                    "id": 81
                 },
                 {
                     "name": "MessageType_LiskGetAddress",
@@ -11080,26 +11302,6 @@
                 {
                     "name": "MessageType_WebAuthnRemoveResidentCredential",
                     "id": 803
-                },
-                {
-                    "name": "MessageType_NEM2GetPublicKey",
-                    "id": 804
-                },
-                {
-                    "name": "MessageType_NEM2PublicKey",
-                    "id": 805
-                },
-                {
-                    "name": "MessageType_NEM2SignTx",
-                    "id": 806
-                },
-                {
-                    "name": "MessageType_NEM2SignedTx",
-                    "id": 807
-                },
-                {
-                    "name": "MessageType_NEM2CosignatureSignedTx",
-                    "id": 808
                 }
             ],
             "options": {}

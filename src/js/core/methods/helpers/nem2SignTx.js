@@ -358,7 +358,7 @@ const secretLockMessage = (tx: $NEM2Transaction): NEM2SecretLock => {
         { name: 'networkType', type: 'number', obligatory: true },
     ]);
 
-    if (tx.hashAlgorithm !== 0 && 
+    if (tx.hashAlgorithm !== 0 &&
         tx.hashAlgorithm !== 1 &&
         tx.hashAlgorithm !== 2 &&
         tx.hashAlgorithm !== 3) {
@@ -392,7 +392,7 @@ const secretProofMessage = (tx: $NEM2Transaction): NEM2SecretProof => {
         { name: 'networkType', type: 'number', obligatory: true },
     ]);
 
-    if (tx.hashAlgorithm !== 0 && 
+    if (tx.hashAlgorithm !== 0 &&
         tx.hashAlgorithm !== 1 &&
         tx.hashAlgorithm !== 2 &&
         tx.hashAlgorithm !== 3) {
@@ -410,36 +410,17 @@ const secretProofMessage = (tx: $NEM2Transaction): NEM2SecretProof => {
     };
 };
 
-/**
-* Get string value of id
-* @returns {string}
-*/
-const toHex = (mosaicId) => {
-    const part1 = mosaicId.higher.toString(16);
-    const part2 = mosaicId.lower.toString(16);
-    return (pad(part1, 8) + pad(part2, 8)).toUpperCase();
-}
-
-/**
-* @param str
-* @param maxVal
-* @returns {string}
-*/
-const pad = (str, maxVal) => {
-    return (str.length < maxVal ? this.pad(`0${str}`, maxVal) : str);
-}
-
 const hashLockMessage = (tx: $NEM2Transaction): NEM2HashLock => {
     validateParams(tx, [
         { name: 'mosaicId', type: 'object', obligatory: true },
         { name: 'amount', type: 'string', obligatory: true },
         { name: 'duration', type: 'string', obligatory: true },
         { name: 'hash', type: 'string', obligatory: true },
-    ]);    
+    ]);
 
     return {
         mosaic: {
-            id: toHex(tx.mosaicId),
+            id: tx.mosaicId,
             amount: tx.amount
         },
         duration: tx.duration,
@@ -599,6 +580,6 @@ export const createTx = (tx: $NEM2Transaction, address_n: Array<number>, generat
         transaction: getCommon(tx),
         ...getTransactionBody(transaction)
     };
-    
+
     return message;
 };
