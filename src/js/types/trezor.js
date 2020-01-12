@@ -405,42 +405,18 @@ export type NEMSignTxMessage = {
 export type NEM = {
     payload: string,
     hash: string,
-    signature: string
-}
-
-export type NEM2SignTxMessage = {
-    address_n: Array<number>,
-    generation_hash?: string,
-    transaction?: NEM2TransactionCommon,
-    transfer?: NEM2Transfer,
-    mosaic_definition?: NEM2MosaicDefinition,
-    mosaic_supply?: NEM2MosaicSupply,
-    namespace_registration?: NEM2NamespaceRegistration,
-    address_alias?: NEM2AddressAlias,
-    mosaic_alias?: NEM2MosaicAlias,
-    namespace_metadata?: NEM2NamespaceMetadata,
-    mosaic_metadata?: NEM2MosaicMetadata,
-    account_metadata?: NEM2AccountMetadata,
-    secret_lock?: NEM2SecretLock,
-    secret_proof?: NEM2SecretProof,
-    hash_lock?: NEM2HashLock,
-    aggregate?: NEM2Aggregate,
-    multisig_modification?: NEM2MultisigModification,
-    account_address_restriction?: NEM2AccountAddressRestrictionTransaction,
-    account_mosaic_restriction?: NEM2AccountMosaicRestrictionTransaction,
-    account_operation_restriction?: NEM2AccountOperationRestrictionTransaction,
-    cosigning?: string
+    signature: string,
 }
 
 export type NEM2SignedTx = {
     payload: string,
     hash: string,
-    signature: string
+    signature: string,
 }
 
 export type NEM2CosignatureSignedTx = {
     parent_hash: string,
-    signature: string
+    signature: string,
 }
 
 export type NEM2TransactionCommon = {
@@ -463,7 +439,7 @@ export type NEM2EmbeddedTransactionCommon = {
 
 export type NEM2Mosaic = {
     id: string,
-    amount: string
+    amount: string,
 }
 
 export type NEM2NetworkType =
@@ -471,7 +447,6 @@ export type NEM2NetworkType =
   | 152 // TEST_NET
   | 96 // MIJIN
   | 144 // MIJIN_TEST
-
 
 export type NEM2Address = {
     address: String,
@@ -500,11 +475,11 @@ export type NEM2MosaicDefinition = {
 export type NEM2MosaicSupply = {
     mosaic_id: string,
     action: number,
-    delta: string
+    delta: string,
 }
 
 export type NEM2PublicKey = {
-    public_key: string
+    public_key: string,
 }
 
 export type NEM2NamespaceRegistration = {
@@ -524,7 +499,7 @@ export type NEM2AddressAlias = {
 export type NEM2MosaicAlias = {
     namespace_id: string,
     mosaic_id: string,
-    alias_action: number
+    alias_action: number,
 }
 
 export type NEM2NamespaceMetadata = {
@@ -558,25 +533,20 @@ export type NEM2SecretLock = {
     duration: string,
     hash_algorithm: number,
     secret: string,
-    recipient_address: NEM2Address
+    recipient_address: NEM2Address,
 }
 
 export type NEM2SecretProof = {
     hash_algorithm: number,
     secret: string,
     proof: string,
-    recipient_address: NEM2Address
+    recipient_address: NEM2Address,
 }
 
 export type NEM2HashLock = {
     mosaic: NEM2Mosaic,
     duration: string,
-    hash: string
-}
-
-export type NEM2Aggregate = {
-    inner_transactions: Array<NEM2InnerTransaction>,
-    cosignatures?: Array<NEM2Cosignatures>
+    hash: string,
 }
 
 export type NEM2MultisigModification = {
@@ -589,21 +559,20 @@ export type NEM2MultisigModification = {
 export type NEM2AccountAddressRestrictionTransaction = {
     restriction_type: number,
     restriction_additions: NEM2Address[],
-    restriction_deletions: NEM2Address[]
+    restriction_deletions: NEM2Address[],
 }
 
 export type NEM2AccountMosaicRestrictionTransaction = {
     restriction_type: number,
     restriction_additions: string[],
-    restriction_deletions: string[]
+    restriction_deletions: string[],
 }
 
 export type NEM2AccountOperationRestrictionTransaction = {
     restriction_type: number,
     restriction_additions: number[],
-    restriction_deletions: number[]
+    restriction_deletions: number[],
 }
-
 
 export type NEM2InnerTransaction = {
     common: NEM2EmbeddedTransactionCommon,
@@ -622,12 +591,41 @@ export type NEM2InnerTransaction = {
     multisig_modification?: NEM2MultisigModification,
     account_address_restriction?: NEM2AccountAddressRestrictionTransaction,
     account_mosaic_restriction?: NEM2AccountMosaicRestrictionTransaction,
-    account_operation_restriction?: NEM2AccountOperationRestrictionTransaction
+    account_operation_restriction?: NEM2AccountOperationRestrictionTransaction,
 }
 
 export type NEM2Cosignatures = {
     signature: string,
-    public_key: string
+    public_key: string,
+}
+
+export type NEM2Aggregate = {
+    inner_transactions: Array<NEM2InnerTransaction>,
+    cosignatures?: Array<NEM2Cosignatures>,
+}
+
+export type NEM2SignTxMessage = {
+    address_n: Array<number>,
+    generation_hash?: string,
+    transaction?: NEM2TransactionCommon,
+    transfer?: NEM2Transfer,
+    mosaic_definition?: NEM2MosaicDefinition,
+    mosaic_supply?: NEM2MosaicSupply,
+    namespace_registration?: NEM2NamespaceRegistration,
+    address_alias?: NEM2AddressAlias,
+    mosaic_alias?: NEM2MosaicAlias,
+    namespace_metadata?: NEM2NamespaceMetadata,
+    mosaic_metadata?: NEM2MosaicMetadata,
+    account_metadata?: NEM2AccountMetadata,
+    secret_lock?: NEM2SecretLock,
+    secret_proof?: NEM2SecretProof,
+    hash_lock?: NEM2HashLock,
+    aggregate?: NEM2Aggregate,
+    multisig_modification?: NEM2MultisigModification,
+    account_address_restriction?: NEM2AccountAddressRestrictionTransaction,
+    account_mosaic_restriction?: NEM2AccountMosaicRestrictionTransaction,
+    account_operation_restriction?: NEM2AccountOperationRestrictionTransaction,
+    cosigning?: string,
 }
 
 // Stellar types
