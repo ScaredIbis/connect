@@ -41,6 +41,9 @@ export type TransactionType =
   | 0x4150 // AccountAddressRestrictionTransaction
   | 0x4250 // AccountMosaicRestrictionTransaction
   | 0x4350 // AccountOperationRestrictionTransaction
+  | 0x414C // AccountLink
+  | 0x4151 // MosaicGlobalRestrictionTransaction
+  | 0x4251 // MosaicAddressRestrictionTransaction
 
 export type NEM2Address = {
     address: String,
@@ -188,6 +191,29 @@ export type Aggregate = {
     cosignatures: Array<Cosignatures>,
 }
 
+export type AccountLinkTransaction = {
+    remotePublicKey: string,
+    linkAction: number,
+}
+
+export type MosaicGlobalRestrictionTransaction = {
+    mosaicId: string,
+    referenceMosaicId?: string,
+    restrictionKey: string,    
+    previousRestrictionValue: string,
+    newRestrictionValue: string,
+    previousRestrictionType: string,
+    newRestrictionType: string
+}
+
+export type MosaicAddressRestrictionTransaction = {
+    mosaicId: string,
+    restrictionKey: string,
+    previousRestrictionValue?: string,
+    newRestrictionValue: string,
+    targetAddress: NEM2Address
+}
+
 export type $NEM2PublicKey = {
     path: $Path,
     publicKey: string,
@@ -216,7 +242,7 @@ export type Transaction = TransactionBase &
                             MultisigModification &
                             AccountAddressRestrictionTransaction &
                             AccountMosaicRestrictionTransaction &
-                            AccountOperationRestrictionTransaction &
+                            AccountOperationRestrictionTransaction &                            
                             Cosign;
 
 export type $NEM2SignTransaction = $Common & {
