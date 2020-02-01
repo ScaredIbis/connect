@@ -25,7 +25,7 @@ import type {
     NEM2MultisigModification,
     NEM2AccountAddressRestrictionTransaction,
     NEM2AccountMosaicRestrictionTransaction,
-    NEM2AccountOperationRestrictionTransaction, 
+    NEM2AccountOperationRestrictionTransaction,
     NEM2AccountLinkTransaction,
     NEM2MosaicGlobalRestrictionTransaction,
     NEM2MosaicAddressRestrictionTransaction,
@@ -67,9 +67,9 @@ export const NEM2_MULTISIG_MODIFICATION: number = 0x4155;
 export const NEM2_ACCOUNT_ADDRESS_RESTRICTION: number = 0x4150;
 export const NEM2_ACCOUNT_MOSAIC_RESTRICTION: number = 0x4250;
 export const NEM2_ACCOUNT_OPERATION_RESTRICTION: number = 0x4350;
-export const NEM2_TRANSACTION_TYPE_ACCOUNT_LINK:number = 0x414C;
-export const NEM2_TRANSACTION_TYPE_MOSAIC_GLOBAL_RESTRICTION:number = 0x4151;
-export const NEM2_TRANSACTION_TYPE_MOSAIC_ADDRESS_RESTRICTION:number = 0x4251;
+export const NEM2_TRANSACTION_TYPE_ACCOUNT_LINK: number = 0x414C;
+export const NEM2_TRANSACTION_TYPE_MOSAIC_GLOBAL_RESTRICTION: number = 0x4151;
+export const NEM2_TRANSACTION_TYPE_MOSAIC_ADDRESS_RESTRICTION: number = 0x4251;
 
 export const TX_TYPES = {
     'transfer': NEM2_TRANSFER,
@@ -91,7 +91,7 @@ export const TX_TYPES = {
     'accountOperationRestriction': NEM2_ACCOUNT_OPERATION_RESTRICTION,
     'accountLink': NEM2_TRANSACTION_TYPE_ACCOUNT_LINK,
     'mosaicGlobalRestriction': NEM2_TRANSACTION_TYPE_MOSAIC_GLOBAL_RESTRICTION,
-    'mosaicAddressRestriction': NEM2_TRANSACTION_TYPE_MOSAIC_ADDRESS_RESTRICTION 
+    'mosaicAddressRestriction': NEM2_TRANSACTION_TYPE_MOSAIC_ADDRESS_RESTRICTION,
 };
 
 const getCommon = (tx: $NEM2Transaction): NEM2TransactionCommon => {
@@ -517,7 +517,7 @@ const accountLink = (tx: $NEM2Transaction): NEM2AccountLinkTransaction => {
     ]);
     return {
         remote_public_key: tx.remotePublicKey,
-        link_action: tx.linkAction
+        link_action: tx.linkAction,
     };
 };
 
@@ -538,7 +538,7 @@ const mosaicGlobalRestriction = (tx: $NEM2Transaction): NEM2MosaicGlobalRestrict
         previous_restriction_value: tx.previousRestrictionValue,
         new_restriction_value: tx.newRestrictionValue,
         previous_restriction_type: tx.previousRestrictionType,
-        new_restriction_type: tx.newRestrictionType
+        new_restriction_type: tx.newRestrictionType,
     };
 };
 
@@ -563,8 +563,8 @@ const mosaicAddressRestriction = (tx: $NEM2Transaction): NEM2MosaicAddressRestri
         new_restriction_value: tx.newRestrictionValue,
         target_address: {
             address: tx.targetAddress.address,
-            network_type: tx.targetAddress.networkType
-        }
+            network_type: tx.targetAddress.networkType,
+        },
     };
 };
 
